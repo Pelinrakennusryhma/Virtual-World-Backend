@@ -11,9 +11,12 @@
   "author": "Lari Löfman",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.4.3"
   },
   "devDependencies": {
+    "eslint": "^8.47.0",
     "nodemon": "^3.0.1"
   }
 }
