@@ -29,6 +29,9 @@ const errorHandler = (error, request, response, next) => {
       error: 'token expired'
     })
   }
+  else if (error.name === 'MongoError' && error.code === 11000) {
+    return response.status(400).send({ error: 'name must be unique' })
+  }
 
   next(error)
 }
