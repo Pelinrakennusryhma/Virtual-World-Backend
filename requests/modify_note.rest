@@ -1,7 +1,0 @@
-PUT http://localhost:3001/api/notes/64db8a621e8f2b6a988857a6
-Content-Type: application/json
-
-{
-    "content": "muutettu note",
-    "important": true
-}
