@@ -1,4 +1,3 @@
-const Note = require('../models/note')
 const User = require('../models/user')
 
 const initialNotes = [
