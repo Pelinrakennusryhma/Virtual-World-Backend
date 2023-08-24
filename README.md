@@ -1,5 +1,8 @@
 # Virtual World Backend
 
+REST Api calls for user authentication.
+WebSocket for Unity server to connect to.
+
 ## Installing
 Clone repository to your computer.
 
@@ -16,7 +19,7 @@ PORT=[Server port]
 ```
 
 ## Running in command line
-Run one of following commands to start bot:
+Run one of following commands to start:
 ```
 npm run dev (for development version)
 npm start (for production version)
