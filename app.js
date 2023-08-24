@@ -9,6 +9,9 @@ const authRouter = require('./controllers/auth')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
+const AuthSuperUser = require('./utils/auth_super_user')
+
+var expressWs = require('express-ws')(app);
 
 mongoose.set('strictQuery', false)
 
@@ -27,11 +30,40 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
+app.ws('/', (ws, req) => {
+  ws.on('message', msg => {
+    ws.send(msg)
+    console.log(msg);
+  })
+  ws.on('close', () => {
+    console.log('WebSocket was closed')
+  })
+})
+
+expressWs.getWss().on('connection', async function (ws, req) {
+
+  const user = req.get("user-agent")
+  if (user) {
+    const isSuperUser = await AuthSuperUser(user)
+    if (isSuperUser) {
+      console.log("ACCESS GRANTED");
+    } else {
+      console.log("ACCESS DENIED")
+      ws.close(1000, "unauthorized")
+    }
+  } else {
+    console.log("ACCESS DENIED")
+    ws.close(1000, "unauthorized")
+  }
+
+});
+
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/auth', authRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
+
 
 module.exports = app

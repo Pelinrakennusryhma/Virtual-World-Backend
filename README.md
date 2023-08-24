@@ -10,7 +10,7 @@ Add `.env` file to root of the repository (same directory with `package.json`).
 Add following contents to `.env` file:
 ```
 MONGODB_URI=[Mongo Database URI]
-TEST_MONGODB_URI=[Mondo Database URI for tests]
+TEST_MONGODB_URI=[Mongo Database URI for tests]
 SECRET=[Secret for handling JWT]
 PORT=[Server port]
 ```

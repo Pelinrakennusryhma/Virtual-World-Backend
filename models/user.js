@@ -7,7 +7,8 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true
   },
-  passwordHash: String
+  passwordHash: String,
+  superUser: Boolean
 })
 
 userSchema.set('toJSON', {
