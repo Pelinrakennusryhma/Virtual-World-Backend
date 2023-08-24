@@ -3,7 +3,7 @@
 ## Installing
 Clone repository to your computer.
 
-Install all dependencies `npm install`.
+Install all dependencies with `npm install`.
 
 Add `.env` file to root of the repository (same directory with `package.json`).
 
