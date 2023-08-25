@@ -18,7 +18,7 @@ authRouter.post('/', async (request, response) => {
   }
   const user = await User.findById(decodedToken.id)
 
-  response.json({ username: user.username })
+  response.json({ username: user.username, id: user.id })
 })
 
 module.exports = authRouter

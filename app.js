@@ -10,6 +10,7 @@ const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 const AuthSuperUser = require('./utils/auth_super_user')
+const ParseMessage = require('./controllers/ws_character_data')
 
 var expressWs = require('express-ws')(app);
 
@@ -32,8 +33,9 @@ app.use(middleware.requestLogger)
 
 app.ws('/', (ws, req) => {
   ws.on('message', msg => {
-    ws.send(msg)
-    console.log(msg);
+    ParseMessage(msg, ws)
+    // ws.send(msg)
+    // console.log(msg);
   })
   ws.on('close', () => {
     console.log('WebSocket was closed')

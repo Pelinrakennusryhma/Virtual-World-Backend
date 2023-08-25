@@ -6,7 +6,7 @@ const characterDataSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  currency: {
+  inventory: {
     money: Number
   }
 })
@@ -19,8 +19,6 @@ characterDataSchema.set('toJSON', {
     delete returnedObject.passwordHash
   }
 })
-
-userSchema.plugin(uniqueValidator);
 
 const User = mongoose.model('CharacterData', characterDataSchema)
 

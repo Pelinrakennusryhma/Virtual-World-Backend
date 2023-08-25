@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
+const CharacterData = require('../models/character_data')
 
 usersRouter.get('/', async (request, response) => {
   const users = await User.find({})
@@ -22,6 +23,15 @@ usersRouter.post('/', async (request, response) => {
 
   const savedUser = await user.save()
 
+  const characterData = new CharacterData({
+    user: savedUser,
+    inventory: {
+      money: 0
+    }
+  })
+
+  await characterData.save()
+
   const userForToken = {
     username: user.username,
     id: user._id,
@@ -35,7 +45,7 @@ usersRouter.post('/', async (request, response) => {
 
   response
     .status(201)
-    .send({ token, username: user.username })
+    .send({ token, username: user.username, id: user.id })
 })
 
 module.exports = usersRouter
