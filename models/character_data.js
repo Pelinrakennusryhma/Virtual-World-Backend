@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const uniqueValidator = require('mongoose-unique-validator')
+const Inventory = require('./inventory')
 
 const characterDataSchema = mongoose.Schema({
   user: {
@@ -7,7 +7,8 @@ const characterDataSchema = mongoose.Schema({
     ref: 'User'
   },
   inventory: {
-    money: Number
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Inventory'
   }
 })
 
@@ -16,10 +17,9 @@ characterDataSchema.set('toJSON', {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
-    delete returnedObject.passwordHash
   }
 })
 
-const User = mongoose.model('CharacterData', characterDataSchema)
+const CharacterData = mongoose.model('CharacterData', characterDataSchema)
 
-module.exports = User
+module.exports = CharacterData

@@ -33,9 +33,10 @@ app.use(middleware.requestLogger)
 
 app.ws('/', (ws, req) => {
   ws.on('message', msg => {
+    // console.log(msg);
     ParseMessage(msg, ws)
     // ws.send(msg)
-    // console.log(msg);
+
   })
   ws.on('close', () => {
     console.log('WebSocket was closed')
