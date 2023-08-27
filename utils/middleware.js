@@ -3,7 +3,7 @@ const logger = require('./logger')
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
   logger.info('Path:  ', request.path)
-  logger.info('Body:  ', request.body)
+  logger.info('Body:  ', Object.fromEntries(Object.entries(request.body).map(([k, v]) => k === "password" ? [k, "*******"] : [k, v])))
   logger.info('Headers', request.headers)
   logger.info('---')
   next()
