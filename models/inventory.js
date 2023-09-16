@@ -1,7 +1,14 @@
 const mongoose = require('mongoose')
+const Item = require('./inventoryItem')
 
 const inventorySchema = mongoose.Schema({
-  money: Number
+  items: [
+    {
+      id: String,
+      name: String,
+      amount: Number
+    }
+  ]
 })
 
 inventorySchema.set('toJSON', {

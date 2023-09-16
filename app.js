@@ -3,9 +3,10 @@ const express = require('express')
 require('express-async-errors')
 const app = express()
 const cors = require('cors')
-const usersRouter = require('./controllers/users')
+const userRouter = require('./controllers/user')
 const loginRouter = require('./controllers/login')
 const authRouter = require('./controllers/auth')
+const inventoryRouter = require('./controllers/inventory')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
@@ -61,9 +62,10 @@ expressWs.getWss().on('connection', async function (ws, req) {
 
 });
 
-app.use('/api/users', usersRouter)
+app.use('/api/user', userRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/inventory', inventoryRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
