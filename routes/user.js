@@ -24,7 +24,7 @@ userRouter.post('/', async (request, response) => {
 
   const savedUser = await user.save()
 
-  const inventory = new Inventory({ money: 0 })
+  const inventory = new Inventory()
   await inventory.save()
 
   const characterData = new CharacterData({
@@ -41,7 +41,7 @@ userRouter.post('/', async (request, response) => {
   const token = jwt.sign(
     userForToken,
     process.env.SECRET,
-    { expiresIn: 60 * 60 }
+    { expiresIn: 60 * 60 } // 1hour token
   )
 
   response
