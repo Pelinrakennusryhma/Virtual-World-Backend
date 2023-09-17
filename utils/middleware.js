@@ -31,6 +31,8 @@ const errorHandler = (error, request, response, next) => {
   }
   else if (error.name === 'MongoError' && error.code === 11000) {
     return response.status(400).send({ error: 'name must be unique' })
+  } else if (error.name === 'InventoryError') {
+    return response.status(400).send({ error: error.message })
   }
 
   next(error)
