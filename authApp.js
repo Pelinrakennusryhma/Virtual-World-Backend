@@ -6,7 +6,6 @@ const cors = require('cors')
 const userRouter = require('./routes/user')
 const loginRouter = require('./routes/login')
 const authRouter = require('./routes/auth')
-const inventoryRouter = require('./routes/inventory')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
@@ -14,18 +13,6 @@ const AuthSuperUser = require('./utils/auth')
 const ParseMessage = require('./routes/ws_character_data')
 
 var expressWs = require('express-ws')(app);
-
-mongoose.set('strictQuery', false)
-
-logger.info('connecting to db')
-
-mongoose.connect(config.MONGODB_URI)
-  .then(() => {
-    logger.info('connected to MongoDB')
-  })
-  .catch((error) => {
-    logger.error('error connection to MongoDB:', error.message)
-  })
 
 app.use(cors())
 app.use(express.static('build'))
@@ -65,7 +52,6 @@ expressWs.getWss().on('connection', async function (ws, req) {
 app.use('/api/user', userRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/auth', authRouter)
-app.use('/api/inventory', inventoryRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
