@@ -10,7 +10,7 @@ const inventoryRouter = require('./routes/inventory')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
-const AuthSuperUser = require('./utils/auth_super_user')
+const AuthSuperUser = require('./utils/auth')
 const ParseMessage = require('./routes/ws_character_data')
 
 var expressWs = require('express-ws')(app);

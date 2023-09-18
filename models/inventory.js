@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const inventorySchema = mongoose.Schema({
+  money: Number,
   items: [
     {
       _id: false,

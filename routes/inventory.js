@@ -1,6 +1,6 @@
 const inventoryRouter = require('express').Router()
 const { GetInventory, AddItem, RemoveItem } = require('../services/inventoryService')
-const { CreateError } = require('../utils/errors')
+const { createError } = require('../utils/errors')
 
 inventoryRouter.get('/:userId', async (request, response) => {
   const inventory = await GetInventory(request.params.userId)
@@ -9,7 +9,7 @@ inventoryRouter.get('/:userId', async (request, response) => {
       .status(400)
       .json(inventory)
   } else {
-    throw CreateError('InventoryError', `Unable to get inventory of UserID ${request.params.userId}`)
+    throw createError('InventoryError', `Unable to get inventory of UserID ${request.params.userId}`)
   }
 })
 
@@ -29,7 +29,7 @@ inventoryRouter.patch('/:userId', async (request, response) => {
       .status(200)
       .json(item)
   } else {
-    throw CreateError('InventoryError', `Unable to modify inventory of UserID ${userId}`)
+    throw createError('InventoryError', `Unable to modify inventory of UserID ${userId}`)
   }
 })
 

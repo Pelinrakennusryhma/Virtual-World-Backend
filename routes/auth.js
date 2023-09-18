@@ -1,24 +1,11 @@
 const authRouter = require('express').Router()
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
-
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
+const { authUserFromToken } = require('../services/authService')
 
 authRouter.post('/', async (request, response) => {
 
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  const userData = await authUserFromToken(request)
 
-  response.json({ username: user.username, id: user.id })
+  response.json(userData)
 })
 
 module.exports = authRouter

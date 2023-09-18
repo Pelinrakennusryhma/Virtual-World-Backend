@@ -1,5 +1,5 @@
 const inventoryRouter = require('express').Router()
-const { CreateError } = require('../utils/errors')
+const { createError } = require('../utils/errors')
 const CharacterData = require('../models/character_data')
 const Inventory = require('../models/inventory')
 
@@ -43,10 +43,10 @@ const RemoveItem = async (userId, itemId, amount) => {
       const updatedInventory = await Inventory.findByIdAndUpdate(characterData.inventory, { items: updatedItems }, { new: true });
       return updatedInventory.items.find(i => i.id === itemId)
     } else {
-      throw CreateError('InventoryError', `Can't remove ${amount} of ItemID ${itemId} as only ${foundItem.amount} are in inventory`)
+      throw createError('InventoryError', `Can't remove ${amount} of ItemID ${itemId} as only ${foundItem.amount} are in inventory`)
     }
   } else {
-    throw CreateError('InventoryError', `No ItemID ${itemId} found in inventory to be removed`)
+    throw createError('InventoryError', `No ItemID ${itemId} found in inventory to be removed`)
   }
 }
 
