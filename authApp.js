@@ -9,7 +9,7 @@ const authRouter = require('./routes/auth')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
-const AuthSuperUser = require('./utils/auth')
+const { authSuperUser } = require('./utils/auth')
 const ParseMessage = require('./routes/ws_character_data')
 
 var expressWs = require('express-ws')(app);
@@ -35,7 +35,7 @@ expressWs.getWss().on('connection', async function (ws, req) {
 
   const user = req.get("user-agent")
   if (user) {
-    const isSuperUser = await AuthSuperUser(user)
+    const isSuperUser = await authSuperUser(user)
     if (isSuperUser) {
       console.log("ACCESS GRANTED");
     } else {
