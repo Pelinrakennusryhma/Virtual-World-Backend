@@ -1,7 +1,8 @@
 const supertest = require('supertest')
 const mongoose = require('mongoose')
+require('../InitDatabase')
 const helper = require('./test_helper')
-const app = require('../app')
+const app = require('../authApp')
 const api = supertest(app)
 
 const bcrypt = require('bcrypt')
@@ -22,12 +23,11 @@ describe('when there is initially one user at db', () => {
 
     const newUser = {
       username: 'Koko',
-      name: 'Mari Testaaja',
       password: 'salasana666',
     }
 
     await api
-      .post('/api/users')
+      .post('/api/user')
       .send(newUser)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -44,25 +44,21 @@ describe('when there is initially one user at db', () => {
 
     const newUser = {
       username: 'root',
-      name: 'Superuser',
       password: 'salainen',
     }
 
     const result = await api
-      .post('/api/users')
+      .post('/api/user')
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('expected `username` to be unique')
+    expect(result.body.error).toContain('unique')
 
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 })
-
-
-
 
 afterAll(async () => {
   await mongoose.connection.close()

@@ -13,9 +13,10 @@ Add `.env` file to root of the repository (same directory with `package.json`).
 Add following contents to `.env` file:
 ```
 MONGODB_URI=[Mongo Database URI]
-TEST_MONGODB_URI=[Mongo Database URI for tests]
+TEST_MONGODB_URI=[Optional, Mongo Database URI for tests]
 SECRET=[Secret for handling JWT]
-PORT=[Server port]
+AUTH_PORT=[Port for the user authentication server]
+DATA_PORT=[Port for Unity Dedicated Server's localhost server]
 ```
 
 ## Running in command line
