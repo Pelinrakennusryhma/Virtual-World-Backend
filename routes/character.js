@@ -14,7 +14,8 @@ characterRouter.get('/:userId', async (request, response) => {
 
 characterRouter.post('/:userId/quests/active-quests', async (request, response) => {
   const params = request.body
-  params.userId = request.params.userId;
+  params.userId = request.params.userId
+  params.questId = request.body.id
   const data = await addActiveQuestData(params)
 
   response.status(200).json(data)
@@ -23,6 +24,7 @@ characterRouter.post('/:userId/quests/active-quests', async (request, response) 
 characterRouter.delete('/:userId/quests/active-quests/', async (request, response) => {
   const params = request.body
   params.userId = request.params.userId;
+  params.questId = request.body.id
   const data = await deleteActiveQuestData(params)
 
   response.status(200).json(data)
@@ -37,6 +39,7 @@ characterRouter.delete('/:userId/quests/active-quests/reset-all', async (request
 characterRouter.post('/:userId/quests/completed-quests', async (request, response) => {
   const params = request.body
   params.userId = request.params.userId;
+  params.questId = request.body.id
   const data = await addCompletedQuestData(params)
 
   response.status(200).json(data)
