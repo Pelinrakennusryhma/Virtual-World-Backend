@@ -1,9 +1,9 @@
 const inventoryRouter = require('express').Router()
-const { GetInventory, AddItem, RemoveItem } = require('../services/inventoryService')
+const { getInventory, addItem, removeItem } = require('../services/inventoryService')
 const { createError } = require('../utils/errors')
 
 inventoryRouter.get('/:userId', async (request, response) => {
-  const inventory = await GetInventory(request.params.userId)
+  const inventory = await getInventory(request.params.userId)
   if (inventory) {
     response
       .status(400)
@@ -19,9 +19,9 @@ inventoryRouter.put('/:userId', async (request, response) => {
 
   let item
   if (operation == "ADD") {
-    item = await AddItem(userId, itemId, itemName, amount)
+    item = await addItem(userId, itemId, itemName, amount)
   } else if (operation == "REMOVE") {
-    item = await RemoveItem(userId, itemId, amount)
+    item = await removeItem(userId, itemId, amount)
   }
 
   if (item) {

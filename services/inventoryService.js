@@ -1,14 +1,13 @@
-const inventoryRouter = require('express').Router()
 const { createError } = require('../utils/errors')
 const CharacterData = require('../models/character_data')
 const Inventory = require('../models/inventory')
 
-const GetInventory = async (userId) => {
+const getInventory = async (userId) => {
   const characterData = await CharacterData.findOne({ user: userId }).populate("inventory")
   return characterData.inventory;
 }
 
-const AddItem = async (userId, itemId, itemName, amount) => {
+const addItem = async (userId, itemId, itemName, amount) => {
   const characterData = await CharacterData.findOne({ user: userId })
   const inventory = await Inventory.findOne({ _id: characterData.inventory }).populate("items")
   const items = inventory.items;
@@ -29,7 +28,7 @@ const AddItem = async (userId, itemId, itemName, amount) => {
   }
 }
 
-const RemoveItem = async (userId, itemId, amount) => {
+const removeItem = async (userId, itemId, amount) => {
   const characterData = await CharacterData.findOne({ user: userId })
   const inventory = await Inventory.findOne({ _id: characterData.inventory }).populate("items")
   const items = inventory.items;
@@ -51,7 +50,7 @@ const RemoveItem = async (userId, itemId, amount) => {
 }
 
 module.exports = {
-  GetInventory,
-  AddItem,
-  RemoveItem
+  getInventory,
+  addItem,
+  removeItem
 }

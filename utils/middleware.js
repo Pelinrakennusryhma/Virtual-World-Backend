@@ -29,6 +29,8 @@ const errorHandler = (error, request, response, next) => {
       return response.status(400).send({ error: error.message })
     case 'AuthError':
       return response.status(401).send({ error: error.message })
+    case 'QuestError':
+      return response.status(401).send({ error: error.message })
     default:
       break;
   }

@@ -9,6 +9,22 @@ const characterDataSchema = mongoose.Schema({
   inventory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Inventory'
+  },
+  quests: {
+    activeQuests: [
+      {
+        _id: false,
+        id: String,
+        step: Number,
+        stepProgress: Number
+      }
+    ],
+    completedQuests: [
+      {
+        _id: false,
+        id: String,
+      }
+    ]
   }
 })
 

@@ -1,8 +1,76 @@
 const CharacterData = require('../models/character_data')
+const { createError } = require('../utils/errors')
 
-getCharacterData = async (id) => {
+const getCharacterData = async (id) => {
   const characterData = await CharacterData.findOne({ user: id }).populate("inventory").populate("user")
   return characterData;
 }
 
-module.exports = { getCharacterData }
+const addActiveQuestData = async ({ userId, questId, step, stepProgress }) => {
+  const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
+
+  const questExists = characterData.quests.activeQuests.find((quest) => quest.id === questId);
+
+  // quest isn't already saved as an active quest, add it
+  if (!questExists) {
+    const newQuest = { id: questId, step, stepProgress }
+    characterData.quests.activeQuests.push(newQuest)
+    characterData.save()
+    return newQuest;
+    // quest is already saved, update it with new step data
+  } else {
+    const questIndex = characterData.quests.activeQuests.findIndex((quest) => quest.id === questId)
+    console.log(questIndex)
+    characterData.quests.activeQuests[questIndex].step = step
+    characterData.quests.activeQuests[questIndex].stepProgress = stepProgress
+    characterData.save()
+    return characterData.quests.activeQuests[questIndex]
+  }
+}
+
+const deleteActiveQuestData = async ({ userId, questId }) => {
+  const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
+
+  characterData.quests.activeQuests = characterData.quests.activeQuests.filter((quest) => quest.id !== questId);
+  characterData.save()
+}
+
+const deleteAllActiveQuestData = async (userId) => {
+  const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
+
+  characterData.quests.activeQuests = []
+  characterData.save()
+}
+
+const addCompletedQuestData = async ({ userId, questId }) => {
+  const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
+
+  const questExists = characterData.quests.completedQuests.find((quest) => quest.id === questId);
+
+  // quest isn't already saved as a completed quest, add it
+  if (!questExists) {
+    const newQuest = { id: questId }
+    characterData.quests.completedQuests.push(newQuest)
+    characterData.save()
+    return newQuest;
+    // quest is already saved and shouldn't be added to the list again
+  } else {
+    throw createError('QuestError', `Quest of ID ${questId} is already in completed quests list`)
+  }
+}
+
+const deleteAllCompletedQuestData = async (userId) => {
+  const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
+
+  characterData.quests.completedQuests = []
+  characterData.save()
+}
+
+module.exports = {
+  getCharacterData,
+  addActiveQuestData,
+  deleteActiveQuestData,
+  deleteAllActiveQuestData,
+  addCompletedQuestData,
+  deleteAllCompletedQuestData
+}
