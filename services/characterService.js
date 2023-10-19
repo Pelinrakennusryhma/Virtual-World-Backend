@@ -2,7 +2,7 @@ const CharacterData = require('../models/character_data')
 const { createError } = require('../utils/errors')
 
 const getCharacterData = async (id) => {
-  const characterData = await CharacterData.findOne({ user: id }).populate("inventory").populate("user")
+  const characterData = await CharacterData.findOne({ user: id }).populate("inventory").populate("user").populate("quests")
   return characterData;
 }
 
@@ -66,11 +66,33 @@ const deleteAllCompletedQuestData = async (userId) => {
   characterData.save()
 }
 
+const setFocusedQuest = async ({ userId, questId }) => {
+  const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
+
+  const newFocusedQuest = { id: questId }
+  characterData.quests.focusedQuest = newFocusedQuest
+  characterData.save()
+  return newFocusedQuest
+}
+
+const clearAllQuestData = async (userId) => {
+  const clearedQuests = {
+    activeQuests: [],
+    completedQuests: [],
+    focusedQuest: {
+      id: ""
+    }
+  }
+  const characterData = await CharacterData.findOneAndUpdate({ user: userId }, { quests: clearedQuests });
+}
+
 module.exports = {
   getCharacterData,
   addActiveQuestData,
   deleteActiveQuestData,
   deleteAllActiveQuestData,
   addCompletedQuestData,
-  deleteAllCompletedQuestData
+  deleteAllCompletedQuestData,
+  setFocusedQuest,
+  clearAllQuestData
 }

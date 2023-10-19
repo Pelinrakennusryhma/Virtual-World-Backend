@@ -4,7 +4,9 @@ const { getCharacterData,
   deleteActiveQuestData,
   deleteAllActiveQuestData,
   addCompletedQuestData,
-  deleteAllCompletedQuestData } = require('../services/characterService')
+  deleteAllCompletedQuestData,
+  setFocusedQuest,
+  clearAllQuestData } = require('../services/characterService')
 
 characterRouter.get('/:userId', async (request, response) => {
   const user = await getCharacterData(request.params.userId)
@@ -47,6 +49,21 @@ characterRouter.post('/:userId/quests/completed-quests', async (request, respons
 
 characterRouter.delete('/:userId/quests/completed-quests/reset-all', async (request, response) => {
   const data = await deleteAllCompletedQuestData(request.params.userId)
+
+  response.status(200).json(data)
+})
+
+characterRouter.post('/:userId/quests/focused-quest', async (request, response) => {
+  const params = request.body
+  params.userId = request.params.userId;
+  params.questId = request.body.id
+  const data = await setFocusedQuest(params)
+
+  response.status(200).json(data)
+})
+
+characterRouter.delete('/:userId/quests/reset-all', async (request, response) => {
+  const data = await clearAllQuestData(request.params.userId)
 
   response.status(200).json(data)
 })

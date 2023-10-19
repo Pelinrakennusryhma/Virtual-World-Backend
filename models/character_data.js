@@ -24,7 +24,11 @@ const characterDataSchema = mongoose.Schema({
         _id: false,
         id: String,
       }
-    ]
+    ],
+    focusedQuest: {
+      _id: false,
+      id: String,
+    }
   }
 })
 
