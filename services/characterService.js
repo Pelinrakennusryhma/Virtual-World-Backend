@@ -15,7 +15,7 @@ const addActiveQuestData = async ({ userId, questId, step, stepProgress }) => {
   if (!questExists) {
     const newQuest = { id: questId, step, stepProgress }
     characterData.quests.activeQuests.push(newQuest)
-    characterData.save()
+    await characterData.save()
     return newQuest;
     // quest is already saved, update it with new step data
   } else {
@@ -23,7 +23,7 @@ const addActiveQuestData = async ({ userId, questId, step, stepProgress }) => {
     console.log(questIndex)
     characterData.quests.activeQuests[questIndex].step = step
     characterData.quests.activeQuests[questIndex].stepProgress = stepProgress
-    characterData.save()
+    await characterData.save()
     return characterData.quests.activeQuests[questIndex]
   }
 }
@@ -32,17 +32,17 @@ const deleteActiveQuestData = async ({ userId, questId }) => {
   const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
 
   characterData.quests.activeQuests = characterData.quests.activeQuests.filter((quest) => quest.id !== questId);
-  characterData.save()
+  await characterData.save()
 }
 
 const deleteAllActiveQuestData = async (userId) => {
   const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
 
   characterData.quests.activeQuests = []
-  characterData.save()
+  await characterData.save()
 }
 
-const addCompletedQuestData = async ({ userId, questId }) => {
+const addCompletedQuestData = async ({ userId, questId, deleteFromActives, resetFocused }) => {
   const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
 
   const questExists = characterData.quests.completedQuests.find((quest) => quest.id === questId);
@@ -51,7 +51,16 @@ const addCompletedQuestData = async ({ userId, questId }) => {
   if (!questExists) {
     const newQuest = { id: questId }
     characterData.quests.completedQuests.push(newQuest)
-    characterData.save()
+
+    if (deleteFromActives === true) {
+      characterData.quests.activeQuests = characterData.quests.activeQuests.filter((quest) => quest.id !== questId);
+    }
+
+    if (resetFocused === true) {
+      characterData.quests.focusedQuest = { id: "" }
+    }
+
+    await characterData.save()
     return newQuest;
     // quest is already saved and shouldn't be added to the list again
   } else {
@@ -63,7 +72,7 @@ const deleteAllCompletedQuestData = async (userId) => {
   const characterData = await CharacterData.findOne({ user: userId }).populate("quests")
 
   characterData.quests.completedQuests = []
-  characterData.save()
+  await characterData.save()
 }
 
 const setFocusedQuest = async ({ userId, questId }) => {
@@ -71,7 +80,7 @@ const setFocusedQuest = async ({ userId, questId }) => {
 
   const newFocusedQuest = { id: questId }
   characterData.quests.focusedQuest = newFocusedQuest
-  characterData.save()
+  await characterData.save()
   return newFocusedQuest
 }
 

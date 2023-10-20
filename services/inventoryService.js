@@ -17,7 +17,7 @@ const addItem = async (userId, itemId, itemName, amount) => {
   // item doesn't exist in inventory, add amount items
   if (!foundItem) {
     const newItem = { id: itemId, name: itemName, amount }
-    const updatedInventory = await Inventory.findByIdAndUpdate(characterData.inventory, { $push: { "items": newItem } }, { new: true });
+    await Inventory.findByIdAndUpdate(characterData.inventory, { $push: { "items": newItem } }, { new: true });
     return newItem;
     // item does exist, increase amount
   } else {
