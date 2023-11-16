@@ -1,5 +1,5 @@
 const inventoryRouter = require('express').Router()
-const { getInventory, addItem, removeItem } = require('../services/inventoryService')
+const { getInventory, modifyInventory } = require('../services/inventoryService')
 const { createError } = require('../utils/errors')
 
 inventoryRouter.get('/:userId', async (request, response) => {
@@ -14,23 +14,34 @@ inventoryRouter.get('/:userId', async (request, response) => {
 })
 
 inventoryRouter.put('/:userId', async (request, response) => {
-  const { itemId, itemName, operation, amount } = request.body
+  // const { itemId, itemName, operation, amount } = request.body
+  const { inventoryChanges } = request.body
   const userId = request.params.userId
 
-  let item
-  if (operation == "ADD") {
-    item = await addItem(userId, itemId, itemName, amount)
-  } else if (operation == "REMOVE") {
-    item = await removeItem(userId, itemId, amount)
-  }
+  const modifiedInventory = await modifyInventory(userId, inventoryChanges)
 
-  if (item) {
+  if (modifiedInventory) {
     response
       .status(200)
-      .json(item)
+      .json(modifiedInventory)
   } else {
     throw createError('InventoryError', `Unable to modify inventory of UserID ${userId}`)
   }
+
+  // let item
+  // if (operation == "ADD") {
+  //   item = await addItem(userId, itemId, itemName, amount)
+  // } else if (operation == "REMOVE") {
+  //   item = await removeItem(userId, itemId, amount)
+  // }
+
+  // if (item) {
+  //   response
+  //     .status(200)
+  //     .json(item)
+  // } else {
+  //   throw createError('InventoryError', `Unable to modify inventory of UserID ${userId}`)
+  // }
 })
 
 module.exports = inventoryRouter

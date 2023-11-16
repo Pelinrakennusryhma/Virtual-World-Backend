@@ -7,6 +7,54 @@ const getInventory = async (userId) => {
   return characterData.inventory;
 }
 
+const modifyInventory = async (userId, inventoryChanges) => {
+  const characterData = await CharacterData.findOne({ user: userId })
+  const inventory = await Inventory.findOne({ _id: characterData.inventory }).populate("items")
+  const items = inventory.items;
+
+  const modifiedItems = []
+
+  console.log(inventoryChanges)
+  inventoryChanges.forEach(async change => {
+    // Item exists in inventory
+    const foundItem = items.find((item) => item.id == change.itemId);
+
+    let item
+    if (change.operation == "ADD") {
+
+      if (!foundItem) { // item doesn't exist, create and set amount
+        const newItem = { id: change.itemId, name: change.itemName, amount: change.amount }
+        modifiedItems.push(newItem);
+      } else { // item does exist, increase amount
+        foundItem.amount += parseInt(change.amount)
+        modifiedItems.push(foundItem)
+      }
+
+    } else if (change.operation == "REMOVE") {
+
+      if (!foundItem) {
+        // throw createError('InventoryError', `No ItemID ${change.itemId} found in inventory to be removed`)
+      }
+
+      if (foundItem.amount >= change.amount) {
+        foundItem.amount -= parseInt(change.amount)
+
+        if (foundItem.amount > 0) {
+          modifiedItems.push(foundItem)
+        }
+
+      } else {
+        modifiedItems.push(foundItem)
+        // throw createError('InventoryError', `Can't remove ${change.amount} of ItemID ${change.itemId} as only ${foundItem.amount} are in inventory`)
+      }
+    }
+
+  })
+
+  const updatedInventory = await Inventory.findByIdAndUpdate(characterData.inventory, { items: modifiedItems }, { new: true });
+  return updatedInventory
+}
+
 const addItem = async (userId, itemId, itemName, amount) => {
   const characterData = await CharacterData.findOne({ user: userId })
   const inventory = await Inventory.findOne({ _id: characterData.inventory }).populate("items")
@@ -51,6 +99,5 @@ const removeItem = async (userId, itemId, amount) => {
 
 module.exports = {
   getInventory,
-  addItem,
-  removeItem
+  modifyInventory
 }
