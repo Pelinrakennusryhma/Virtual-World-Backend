@@ -7,6 +7,52 @@ const getInventory = async (userId) => {
   return characterData.inventory;
 }
 
+const modifyInventory = async (userId, inventoryChanges) => {
+  const characterData = await CharacterData.findOne({ user: userId })
+  const inventory = await Inventory.findOne({ _id: characterData.inventory }).populate("items")
+  const items = inventory.items;
+
+  const modifiedItems = []
+
+  console.log(inventoryChanges)
+  for (let index = 0; index < inventoryChanges.length; index++) {
+    const change = inventoryChanges[index];
+
+    // Item exists in inventory
+    const foundItem = items.find((item) => item.id == change.itemId);
+
+    let item
+    if (change.operation == "ADD") {
+
+      if (!foundItem) { // item doesn't exist, create and set amount
+        const newItem = { id: change.itemId, name: change.itemName, amount: change.amount }
+        modifiedItems.push(newItem);
+      } else { // item does exist, increase amount
+        foundItem.amount += parseInt(change.amount)
+        modifiedItems.push(foundItem)
+      }
+
+    } else if (change.operation == "REMOVE") {
+
+      if (!foundItem || foundItem.amount < change.amount) {
+        // if items to remove don't exist, cancel everything and return original inventory
+        return inventory;
+      }
+
+      foundItem.amount -= parseInt(change.amount)
+
+      // if left with items in inventory, update the amount
+      if (foundItem.amount > 0) {
+        modifiedItems.push(foundItem)
+      }
+    }
+  }
+
+
+  const updatedInventory = await Inventory.findByIdAndUpdate(characterData.inventory, { items: modifiedItems }, { new: true });
+  return updatedInventory
+}
+
 const addItem = async (userId, itemId, itemName, amount) => {
   const characterData = await CharacterData.findOne({ user: userId })
   const inventory = await Inventory.findOne({ _id: characterData.inventory }).populate("items")
@@ -51,6 +97,5 @@ const removeItem = async (userId, itemId, amount) => {
 
 module.exports = {
   getInventory,
-  addItem,
-  removeItem
+  modifyInventory
 }
