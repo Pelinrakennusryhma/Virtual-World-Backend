@@ -15,7 +15,9 @@ const modifyInventory = async (userId, inventoryChanges) => {
   const modifiedItems = []
 
   console.log(inventoryChanges)
-  inventoryChanges.forEach(async change => {
+  for (let index = 0; index < inventoryChanges.length; index++) {
+    const change = inventoryChanges[index];
+
     // Item exists in inventory
     const foundItem = items.find((item) => item.id == change.itemId);
 
@@ -32,24 +34,20 @@ const modifyInventory = async (userId, inventoryChanges) => {
 
     } else if (change.operation == "REMOVE") {
 
-      if (!foundItem) {
-        // throw createError('InventoryError', `No ItemID ${change.itemId} found in inventory to be removed`)
+      if (!foundItem || foundItem.amount < change.amount) {
+        // if items to remove don't exist, cancel everything and return original inventory
+        return inventory;
       }
 
-      if (foundItem.amount >= change.amount) {
-        foundItem.amount -= parseInt(change.amount)
+      foundItem.amount -= parseInt(change.amount)
 
-        if (foundItem.amount > 0) {
-          modifiedItems.push(foundItem)
-        }
-
-      } else {
+      // if left with items in inventory, update the amount
+      if (foundItem.amount > 0) {
         modifiedItems.push(foundItem)
-        // throw createError('InventoryError', `Can't remove ${change.amount} of ItemID ${change.itemId} as only ${foundItem.amount} are in inventory`)
       }
     }
+  }
 
-  })
 
   const updatedInventory = await Inventory.findByIdAndUpdate(characterData.inventory, { items: modifiedItems }, { new: true });
   return updatedInventory

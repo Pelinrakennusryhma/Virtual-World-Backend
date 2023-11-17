@@ -14,7 +14,6 @@ inventoryRouter.get('/:userId', async (request, response) => {
 })
 
 inventoryRouter.put('/:userId', async (request, response) => {
-  // const { itemId, itemName, operation, amount } = request.body
   const { inventoryChanges } = request.body
   const userId = request.params.userId
 
@@ -27,21 +26,6 @@ inventoryRouter.put('/:userId', async (request, response) => {
   } else {
     throw createError('InventoryError', `Unable to modify inventory of UserID ${userId}`)
   }
-
-  // let item
-  // if (operation == "ADD") {
-  //   item = await addItem(userId, itemId, itemName, amount)
-  // } else if (operation == "REMOVE") {
-  //   item = await removeItem(userId, itemId, amount)
-  // }
-
-  // if (item) {
-  //   response
-  //     .status(200)
-  //     .json(item)
-  // } else {
-  //   throw createError('InventoryError', `Unable to modify inventory of UserID ${userId}`)
-  // }
 })
 
 module.exports = inventoryRouter
