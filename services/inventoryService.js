@@ -25,7 +25,7 @@ const modifyInventory = async (userId, inventoryChanges) => {
     if (change.operation == "ADD") {
 
       if (!foundItem) { // item doesn't exist, create and set amount
-        const newItem = { id: change.itemId, name: change.itemName, amount: change.amount }
+        const newItem = { id: change.itemId, amount: change.amount }
         modifiedItems.push(newItem);
       } else { // item does exist, increase amount
         foundItem.amount += parseInt(change.amount)
