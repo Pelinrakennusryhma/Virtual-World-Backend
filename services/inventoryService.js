@@ -10,9 +10,7 @@ const getInventory = async (userId) => {
 const modifyInventory = async (userId, inventoryChanges) => {
   const characterData = await CharacterData.findOne({ user: userId })
   const inventory = await Inventory.findOne({ _id: characterData.inventory }).populate("items")
-  const items = inventory.items;
-
-  const modifiedItems = []
+  let items = inventory.items;
 
   console.log(inventoryChanges)
   for (let index = 0; index < inventoryChanges.length; index++) {
@@ -26,10 +24,10 @@ const modifyInventory = async (userId, inventoryChanges) => {
 
       if (!foundItem) { // item doesn't exist, create and set amount
         const newItem = { id: change.itemId, amount: change.amount }
-        modifiedItems.push(newItem);
+        items.push(newItem);
       } else { // item does exist, increase amount
         foundItem.amount += parseInt(change.amount)
-        modifiedItems.push(foundItem)
+        items = items.map(i => i.id === foundItem.id ? foundItem : i)
       }
 
     } else if (change.operation == "REMOVE") {
@@ -43,13 +41,27 @@ const modifyInventory = async (userId, inventoryChanges) => {
 
       // if left with items in inventory, update the amount
       if (foundItem.amount > 0) {
-        modifiedItems.push(foundItem)
+        items = items.map(i => i.id === foundItem.id ? foundItem : i)
+      } else {
+        items = items.filter(i => i.id !== foundItem.id)
       }
     }
   }
 
+  // const finalItems = items;
 
-  const updatedInventory = await Inventory.findByIdAndUpdate(characterData.inventory, { items: modifiedItems }, { new: true });
+  // for (let index = 0; index < modifiedItems.length; index++) {
+  //   const item = modifiedItems[index];
+  //   const modifiedItemIndex = finalItems.findIndex(i => i.id === item.id)
+
+  //   if (modifiedItemIndex) {
+  //     finalItems[modifiedItemIndex] = item;
+  //   } else {
+  //     finalItems.push(item)
+  //   }
+  // }
+
+  const updatedInventory = await Inventory.findByIdAndUpdate(characterData.inventory, { items: items }, { new: true });
   return updatedInventory
 }
 
